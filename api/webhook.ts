@@ -38,26 +38,25 @@ async function listRepoFiles(owner: string, repo: string, octokit: any) {
 
 // Handle push events
 app.webhooks.on('push', async ({ octokit, payload }) => {
-  console.log("Recieved push for repo", payload.repository.name)
+  console.log("Received push for repo", payload.repository.name);
   const owner = payload.repository.owner?.login;
-  const repo = payload.repository.name;
-  owner && await listRepoFiles(owner, repo, octokit);
+  if (owner) {
+    const repo = payload.repository.name;
+    await listRepoFiles(owner, repo, octokit);
+  }
 });
-
-const middleware = createNodeMiddleware(app.webhooks);
 
 // Vercel API handler
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Log the user agent of the incoming request
-  console.log("Recieved request from:", req.headers['user-agent'])
+  console.log("Received request from:", req.headers['user-agent']);
+  
   // Use Octokit's middleware to handle the webhook
   const middleware = createNodeMiddleware(app.webhooks);
-  // Call the middleware with the request and response objects
-  middleware(req, res, (err) => {
-    if (err) {
-      res.status(500).send(err.message);
-    } else {
-      res.status(200).json({ success: true });
-    }
+  
+  // Directly handle the request and response with the middleware
+  middleware(req, res).catch((error) => {
+    console.error('Middleware error:', error);
+    res.status(500).send(error.message);
   });
 }
