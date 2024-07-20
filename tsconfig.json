@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-      "module": "ESNext",
-      "target": "ESNext",
-      "moduleResolution": "node",
-      "esModuleInterop": true,
-      "strict": true,
-      "forceConsistentCasingInFileNames": true,
-      "skipLibCheck": true
-    },
-    "exclude": ["node_modules"]
+        "lib": ["es2023"],
+        "module": "node16",
+        "target": "es2022",
+    
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node16"
+    }
 }
