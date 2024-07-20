@@ -1,6 +1,6 @@
-import { OctokitInstance, RepoInfo } from "../types";
-import { createGist } from "../services/gist";
-import { createIssue } from "../services/issue";
+import { OctokitInstance, RepoInfo } from "@/types/index.js";
+import { createGist } from "@/services/gist.js";
+import { createIssue } from "@/services/issue.js";
 
 export async function analyzeFilesForKeywords(
   { octokit }: OctokitInstance,

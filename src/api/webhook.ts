@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { createNodeMiddleware } from "@octokit/webhooks";
-import { app } from "@/services/github";
-import { analyzeFilesForKeywords } from "../utils/fileAnalyzer";
+import { app } from "@/services/github.js";
+import { analyzeFilesForKeywords } from "@/utils/fileAnalyzer.js";
 
 // Handle push events
 app.webhooks.on("push", async ({ octokit, payload }) => {
