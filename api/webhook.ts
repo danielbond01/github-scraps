@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import { app } from "../services/github.js";
-import { analyzeFilesForKeywords } from "../utils/fileAnalyzer.js";
+import { analyzeFiles } from "../utils/fileAnalyzer.js";
 
 // Handle push events
 app.webhooks.on("push", async ({ octokit, payload }) => {
@@ -9,7 +9,7 @@ app.webhooks.on("push", async ({ octokit, payload }) => {
   const owner = payload.repository.owner?.login;
   if (owner) {
     const repo = payload.repository.name;
-    await analyzeFilesForKeywords({ octokit }, { owner, repo });
+    await analyzeFiles({ octokit }, { owner, repo });
   }
 });
 

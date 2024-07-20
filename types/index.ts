@@ -6,3 +6,8 @@ export interface RepoInfo {
 export interface OctokitInstance {
   octokit: any;
 }
+
+export interface Issue {
+  title: string;
+  body: string
+}

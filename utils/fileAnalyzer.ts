@@ -1,8 +1,8 @@
-import { OctokitInstance, RepoInfo } from "../types/index.js";
-import { createGist } from "../services/gist.js";
-import { createIssue } from "../services/issue.js";
+import { info } from "console";
+import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
+import { extractTodos } from "./todos.js";
 
-export async function analyzeFilesForKeywords(
+export async function analyzeFiles(
   { octokit }: OctokitInstance,
   { owner, repo }: RepoInfo
 ) {
@@ -14,6 +14,8 @@ export async function analyzeFilesForKeywords(
     repo,
   });
 
+  // Find TODOs and add to array
+  var todos: Issue[] = [];
   for (const item of tree) {
     if (item.type === "blob") {
       const fileContent = await octokit.request(
@@ -28,23 +30,10 @@ export async function analyzeFilesForKeywords(
       const content = Buffer.from(fileContent.data.content, "base64").toString(
         "utf8"
       );
-      const lines = content.split("\n");
 
-      lines.forEach((line, index) => {
-        if (line.includes("// Todo")) {
-          createIssue(
-            { octokit },
-            { owner, repo },
-            "Todo found",
-            `Found Todo at ${item.path}:${index + 1}`
-          );
-        } else if (line.includes("// Gist")) {
-          const [_, gistName] = line.split(" - ");
-          createGist(octokit.auth.token, `Gist: ${gistName}`, {
-            [gistName]: { content: lines.slice(index + 1).join("\n") },
-          });
-        }
-      });
+      todos.push(...extractTodos(content));
     }
   }
+
+  info(`Found ${todos.length} todos in ${owner}/${repo}`);
 }
