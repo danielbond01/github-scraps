@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { createNodeMiddleware } from "@octokit/webhooks";
-import { app } from "../services/github";
+import { app } from "@/services/github";
 import { analyzeFilesForKeywords } from "../utils/fileAnalyzer";
 
 // Handle push events

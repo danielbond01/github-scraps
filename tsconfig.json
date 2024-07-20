@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
-    "module": "esnext",
-    "target": "esnext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
