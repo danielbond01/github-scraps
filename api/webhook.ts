@@ -20,9 +20,6 @@ app.webhooks.onError((error) => {
 
 // Vercel API handler
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // Log the user agent of the incoming request
-  console.log("Received request from:", req.headers["user-agent"]);
-
   // Use Octokit's middleware to handle the webhook
   const middleware = createNodeMiddleware(app.webhooks, {
     path: "/api/webhook",

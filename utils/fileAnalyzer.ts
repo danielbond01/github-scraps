@@ -1,6 +1,7 @@
 import { info } from "console";
 import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
 import { extractTodos } from "./todos.js";
+import { syncIssues } from "../services/issue.js";
 
 export async function analyzeFiles(
   { octokit }: OctokitInstance,
@@ -36,4 +37,6 @@ export async function analyzeFiles(
   }
 
   info(`Found ${todos.length} todos in ${owner}/${repo}`);
+
+  syncIssues({ octokit }, { owner, repo }, todos);
 }
