@@ -44,10 +44,14 @@ export async function syncIssues(
 ) {
   const existingIssues = await getIssues(octokit, { owner, repo });
 
+  info(`Found ${existingIssues.length} existing issues in ${owner}/${repo}`);
+
   const existingTitles = existingIssues.map((issue) => issue.title);
   const newIssues = todos.filter(
     (todo) => !existingTitles.includes(todo.title)
   );
+
+  info(`Creating ${newIssues.length} new issues in ${owner}/${repo}`);
 
   for (const issue of newIssues) {
     info(`Creating issue: ${issue.title}`);

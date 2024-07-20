@@ -32,7 +32,7 @@ export async function analyzeFiles(
         "utf8"
       );
 
-      todos.push(...extractTodos(content));
+      todos = [...todos, ...extractTodos(content)];
     }
   }
 
