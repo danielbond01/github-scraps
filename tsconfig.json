@@ -1,12 +1,16 @@
 {
-    "compilerOptions": {
-        "lib": ["es2023"],
-        "module": "node16",
-        "target": "es2022",
-    
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "moduleResolution": "node16"
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "module": "esnext",
+    "target": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"]
     }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }
