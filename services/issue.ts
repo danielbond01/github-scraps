@@ -79,7 +79,7 @@ export async function syncIssues(
 ) {
   const existingIssues = await getIssues(octokit, { owner, repo });
 
-  info(`Found ${existingIssues.length} existing issues in ${owner}/${repo}`);
+  info(`Found ${existingIssues.length} existing issues in ${owner}/${repo}:`, existingIssues.map((issue) => issue.title));
 
   const existingTitles = existingIssues.map((issue) => issue.title);
   const newIssues = issues.filter(

@@ -35,7 +35,10 @@ export async function analyzeFiles(
     }
   }
 
-  info(`Found ${issues.length} issues in ${owner}/${repo}`);
+  info(
+    `Found ${issues.length} issues in ${owner}/${repo}:`,
+    issues.map((issue) => issue.title)
+  );
 
-  syncIssues({ octokit }, { owner, repo }, issues);
+  await syncIssues({ octokit }, { owner, repo }, issues);
 }

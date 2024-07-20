@@ -23,6 +23,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   // Use Octokit's middleware to handle the webhook
   const middleware = createNodeMiddleware(app.webhooks, {
     path: "/api/webhook",
+    log: undefined
   });
 
   // Directly handle the request and response with the middleware
