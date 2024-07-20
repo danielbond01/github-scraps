@@ -1,5 +1,5 @@
 import { App } from "octokit";
-import { config } from "@/config.js";
+import { config } from "../config";
 
 export const app = new App({
   appId: config.appId,

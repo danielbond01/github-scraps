@@ -1,4 +1,4 @@
-import { OctokitInstance, RepoInfo } from "@/types/index.js";
+import { OctokitInstance, RepoInfo } from "../types";
 
 export async function createIssue(
   { octokit }: OctokitInstance,
