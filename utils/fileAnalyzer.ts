@@ -1,7 +1,6 @@
 import { info } from "console";
 import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
-import { extractTodos } from "./todos.js";
-import { syncIssues } from "../services/issue.js";
+import { extractIssues, syncIssues } from "../services/issue.js";
 
 export async function analyzeFiles(
   { octokit }: OctokitInstance,
@@ -15,8 +14,8 @@ export async function analyzeFiles(
     repo,
   });
 
-  // Find TODOs and add to array
-  var todos: Issue[] = [];
+  // Find ISSUEs and add to array
+  var issues: Issue[] = [];
   for (const item of tree) {
     if (item.type === "blob") {
       const fileContent = await octokit.request(
@@ -32,11 +31,11 @@ export async function analyzeFiles(
         "utf8"
       );
 
-      todos = [...todos, ...extractTodos(content)];
+      issues = [...issues, ...extractIssues(content)];
     }
   }
 
-  info(`Found ${todos.length} todos in ${owner}/${repo}`);
+  info(`Found ${issues.length} issues in ${owner}/${repo}`);
 
-  syncIssues({ octokit }, { owner, repo }, todos);
+  syncIssues({ octokit }, { owner, repo }, issues);
 }
