@@ -47,6 +47,7 @@ app.webhooks.on('push', async ({ octokit, payload }) => {
 // Vercel API handler
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Use Octokit's middleware to handle the webhook
+  console.log("Recieved request:", req)
   const middleware = createNodeMiddleware(app.webhooks);
   return middleware(req, res);
 }
