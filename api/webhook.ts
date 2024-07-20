@@ -46,32 +46,21 @@ app.webhooks.on('push', async ({ octokit, payload }) => {
   }
 });
 
+// This logs any errors that occur.
+app.webhooks.onError((error) => {
+  console.error(`Error processing request: ${error.event}`);
+});
+
 // Vercel API handler
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Log the user agent of the incoming request
   console.log("Received request from:", req.headers['user-agent']);
   
   // Use Octokit's middleware to handle the webhook
-  const middleware = createNodeMiddleware(app.webhooks);
+  const middleware = createNodeMiddleware(app.webhooks, {path: "/api/webhook"});
   
   // Directly handle the request and response with the middleware
-  await new Promise<void>((resolve, reject) => {
-    middleware(req, res, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  }).then(() => {
-    // Ensure the response is ended after middleware processing
-    if (!res.writableEnded) {
-      res.status(200).json({ success: true });
-    }
-  }).catch((error) => {
-    console.error('Middleware error:', error);
-    if (!res.writableEnded) {
-      res.status(500).send(error.message);
-    }
-  });
+  const success = await middleware(req, res)
+  
+  console.log("Call finished, success", success)
 }
