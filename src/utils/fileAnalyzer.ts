@@ -1,7 +1,6 @@
 import { info } from "console";
-import { Issue, Gist, OctokitInstance, RepoInfo } from "../types/index.js";
+import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
 import { extractIssues, syncIssues } from "../services/issue.js";
-import { extractGists, syncGists } from "../services/gist.js";
 
 export async function analyzeFiles(
   { octokit }: OctokitInstance,
@@ -17,7 +16,6 @@ export async function analyzeFiles(
 
   // Find ISSUEs and GISTs and add to arrays
   var issues: Issue[] = [];
-  var gists: Gist[] = [];
   for (const item of tree) {
     if (item.type === "blob") {
       const fileContent = await octokit.request(
@@ -43,16 +41,6 @@ export async function analyzeFiles(
           content
         ),
       ];
-      gists = [
-        ...gists,
-        ...extractGists(
-          repoInfo.owner,
-          repoInfo.repo,
-          repoInfo.sha,
-          item.path,
-          content
-        ),
-      ];
     }
   }
 
@@ -61,13 +49,5 @@ export async function analyzeFiles(
     issues.map((issue) => issue.title)
   );
 
-  info(
-    `Found ${gists.length} gists in ${repoInfo.owner}/${repoInfo.repo}:`,
-    gists.map((gist) => gist.description)
-  );
-
   await syncIssues({ octokit }, repoInfo, issues);
-
-  const response = await octokit.rest.gists.list();
-  console.log(response.data);
 }

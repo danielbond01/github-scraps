@@ -6,7 +6,5 @@ export const app = new App({
   privateKey: config.privateKey,
   webhooks: {
     secret: config.webhookSecret,
-  },
-  clientId: config.clientId,
-  clientSecret: config.clientSecret,
+  }
 });
