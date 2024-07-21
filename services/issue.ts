@@ -11,7 +11,7 @@ export function extractIssues(owner: string, file: string, content: string): Iss
     const match = issueRegex.exec(line);
     if (match) {
       // Get title from match
-      const title = match[1].trim();
+      const title = `${match[1].trim()} in ${file}`;
       const bodyLines = [];
 
       // Check if the next line is a body line
@@ -19,17 +19,31 @@ export function extractIssues(owner: string, file: string, content: string): Iss
         const bodyLine = lines[index + 1].trim().replace(commentRegex, '$1');
         bodyLines.push(`${owner} created an issue in ${file} on line ${index + 1} - ${bodyLine}\n`);
         bodyLines.push("\n");
+      } else {
+        bodyLines.push(`${owner} created an issue in ${file} on line ${index + 1}\n`);
+        bodyLines.push("\n");
       }
 
-      // Add next 20 lines as body if any code exists
-      const codeLines = [];
-      for (let i = 1; i <= 20 && lines.length > index + i; i++) {
-        codeLines.push(lines[index + i]);
+      // Add up to the last 5 lines
+      const precedingCodeLines = [];
+      for (let i = Math.max(0, index - 5); i < index; i++) {
+        precedingCodeLines.push(lines[i]);
       }
 
-      if (codeLines.some(line => line.trim() !== "")) {
+      // Add next 15 lines
+      const followingCodeLines = [];
+      for (let i = 0; i <= 15 && lines.length > index + i; i++) {
+        followingCodeLines.push(lines[index + i]);
+      }
+
+      // Combine preceding and following lines, removing leading and trailing empty lines
+      const combinedCodeLines = [...precedingCodeLines, ...followingCodeLines].filter((line, idx, arr) => {
+        return line.trim() !== "" || (idx > 0 && idx < arr.length - 1);
+      });
+
+      if (combinedCodeLines.length > 0) {
         bodyLines.push("```");
-        bodyLines.push(...codeLines);
+        bodyLines.push(...combinedCodeLines);
         bodyLines.push("```");
       }
 
