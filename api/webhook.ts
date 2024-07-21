@@ -8,8 +8,11 @@ app.webhooks.on("push", async ({ octokit, payload }) => {
   console.log("Received push for repo", payload.repository.name);
   const owner = payload.repository.owner?.login;
   if (owner) {
-    const repo = payload.repository.name;
-    await analyzeFiles({ octokit }, { owner, repo });
+    await analyzeFiles({ octokit }, { 
+      owner, 
+      repo: payload.repository.name,
+      sha: payload.after
+    });
   }
 });
 

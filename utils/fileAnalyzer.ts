@@ -4,14 +4,14 @@ import { extractIssues, syncIssues } from "../services/issue.js";
 
 export async function analyzeFiles(
   { octokit }: OctokitInstance,
-  { owner, repo }: RepoInfo
+  repoInfo: RepoInfo
 ) {
   // Fetch the repository content
   const {
     data: { tree },
   } = await octokit.request("GET /repos/{owner}/{repo}/git/trees/HEAD", {
-    owner,
-    repo,
+    owner: repoInfo.owner,
+    repo: repoInfo.repo,
   });
 
   // Find ISSUEs and add to array
@@ -21,8 +21,8 @@ export async function analyzeFiles(
       const fileContent = await octokit.request(
         "GET /repos/{owner}/{repo}/contents/{path}",
         {
-          owner,
-          repo,
+          owner: repoInfo.owner,
+          repo: repoInfo.repo,
           path: item.path,
         }
       );
@@ -31,14 +31,14 @@ export async function analyzeFiles(
         "utf8"
       );
 
-      issues = [...issues, ...extractIssues(owner, item.path, content)];
+      issues = [...issues, ...extractIssues(repoInfo.owner, repoInfo.repo, repoInfo.sha, item.path, content)];
     }
   }
 
   info(
-    `Found ${issues.length} issues in ${owner}/${repo}:`,
+    `Found ${issues.length} issues in ${repoInfo.owner}/${repoInfo.repo}:`,
     issues.map((issue) => issue.title)
   );
 
-  await syncIssues({ octokit }, { owner, repo }, issues);
+  await syncIssues({ octokit }, repoInfo, issues);
 }

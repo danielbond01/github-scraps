@@ -1,6 +1,7 @@
 export interface RepoInfo {
   owner: string;
   repo: string;
+  sha: string;
 }
 
 export interface OctokitInstance {
