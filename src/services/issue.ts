@@ -11,67 +11,87 @@ export function extractIssues(
   const lines = content.split("\n");
   const issues: Issue[] = [];
   const issueRegex = /\[ISSUE\]\s*(.*)/;
-  const commentRegex = /^[#\/\*]\s*(.*)$/;
+
+  // This regex matches most common comment styles
+  const commentRegex =
+    /^(?:\/\/|#|;|--|\/\*|\*\s?|'''|"""|rem\b|\(\*|{-|\(\*)/i;
 
   const friendlyFile = file.split("/").reverse()[0];
 
+  let inMultiLineComment = false;
+  let multiLineCommentEnd: RegExp | null = null;
+
   lines.forEach((line, index) => {
-    const match = issueRegex.exec(line);
-    if (match) {
-      // Get title from match
-      const title = `${match[1].trim()} in ${friendlyFile}`;
-      const bodyLines = [];
+    try {
+      // Check for multi-line comment start
+      if (!inMultiLineComment) {
+        if (line.trim().startsWith("/*")) {
+          inMultiLineComment = true;
+          multiLineCommentEnd = /\*\//;
+        } else if (
+          line.trim().startsWith("'''") ||
+          line.trim().startsWith('"""')
+        ) {
+          inMultiLineComment = true;
+          multiLineCommentEnd = new RegExp(line.trim().slice(0, 3));
+        } else if (line.trim().startsWith("{-")) {
+          inMultiLineComment = true;
+          multiLineCommentEnd = /-}/;
+        } else if (line.trim().startsWith("(*")) {
+          inMultiLineComment = true;
+          multiLineCommentEnd = /\*\)/;
+        }
+      }
 
-      // Check if the next line is a body line
-      if (title.endsWith(":") && lines.length > index + 1) {
-        const bodyLine = lines[index + 1].trim().replace(commentRegex, "$1");
-        bodyLines.push(
-          `${owner} created an issue in ${friendlyFile} on line ${
+      // Check for multi-line comment end
+      if (
+        inMultiLineComment &&
+        multiLineCommentEnd &&
+        multiLineCommentEnd.test(line)
+      ) {
+        inMultiLineComment = false;
+        multiLineCommentEnd = null;
+      }
+
+      const isComment = inMultiLineComment || commentRegex.test(line.trim());
+
+      if (isComment) {
+        const match = issueRegex.exec(line);
+        if (match) {
+          const title = `${match[1].trim()} in ${friendlyFile}`;
+          const bodyLines = [
+            `${owner} created an issue in ${friendlyFile} on line ${
+              index + 1
+            }\n`,
+          ];
+
+          const codeSnippet = lines
+            .slice(Math.max(0, index - 5), Math.min(lines.length, index + 16))
+            .map((line) => line.trimEnd()) // Preserve leading whitespace, trim trailing
+            .filter(
+              (line, idx, arr) =>
+                line.trim() !== "" || (idx > 0 && idx < arr.length - 1)
+            );
+
+          if (codeSnippet.length > 0) {
+            bodyLines.push("```");
+            bodyLines.push(...codeSnippet);
+            bodyLines.push("```");
+          }
+
+          const permalink = `https://github.com/${owner}/${repo}/blob/${sha}/${file}#L${
             index + 1
-          } - ${bodyLine}\n`
-        );
-      } else {
-        bodyLines.push(
-          `${owner} created an issue in ${friendlyFile} on line ${index + 1}\n`
-        );
+          }`;
+          bodyLines.push(`\nPermalink:\n ${permalink}`);
+
+          issues.push({
+            title: title,
+            body: bodyLines.join("\n"),
+          });
+        }
       }
-
-      // Add up to the last 5 lines
-      const precedingCodeLines = [];
-      for (let i = Math.max(0, index - 5); i < index; i++) {
-        precedingCodeLines.push(lines[i]);
-      }
-
-      // Add next 15 lines
-      const followingCodeLines = [];
-      for (let i = 0; i <= 15 && lines.length > index + i; i++) {
-        followingCodeLines.push(lines[index + i]);
-      }
-
-      // Combine preceding and following lines, removing leading and trailing empty lines
-      const combinedCodeLines = [
-        ...precedingCodeLines,
-        ...followingCodeLines,
-      ].filter((line, idx, arr) => {
-        return line.trim() !== "" || (idx > 0 && idx < arr.length - 1);
-      });
-
-      if (combinedCodeLines.length > 0) {
-        bodyLines.push("```");
-        bodyLines.push(...combinedCodeLines);
-        bodyLines.push("```");
-      }
-
-      // Add permalink
-      const permalink = `https://github.com/${owner}/${repo}/blob/${sha}/${file}#L${
-        index + 1
-      }`;
-      bodyLines.push(`\nPermalink:\n ${permalink}`);
-
-      issues.push({
-        title: title,
-        body: bodyLines.join("\n"),
-      });
+    } catch (error) {
+      console.error(`Error processing line ${index + 1} in ${file}:`, error);
     }
   });
 
