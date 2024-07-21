@@ -31,7 +31,7 @@ export async function analyzeFiles(
         "utf8"
       );
 
-      issues = [...issues, ...extractIssues(content)];
+      issues = [...issues, ...extractIssues(owner, item.path, content)];
     }
   }
 

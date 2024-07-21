@@ -1,10 +1,11 @@
 import { info } from "console";
 import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
 
-export function extractIssues(content: string): Issue[] {
+export function extractIssues(owner: string, file: string, content: string): Issue[] {
   const lines = content.split("\n");
   const issues: Issue[] = [];
   const issueRegex = /\[ISSUE\]\s*(.*)/;
+  const commentRegex = /^[#\/\*]\s*(.*)$/;
 
   lines.forEach((line, index) => {
     const match = issueRegex.exec(line);
@@ -15,16 +16,22 @@ export function extractIssues(content: string): Issue[] {
 
       // Check if the next line is a body line
       if (title.endsWith(":") && lines.length > index + 1) {
-        bodyLines.push(lines[index + 1].trim());
-        bodyLines.push("\n\n");
+        const bodyLine = lines[index + 1].trim().replace(commentRegex, '$1');
+        bodyLines.push(`${owner} created an issue in ${file} on line ${index + 1} - ${bodyLine}\n`);
+        bodyLines.push("\n");
       }
 
-      // Add next 20 lines as body
-      bodyLines.push("```");
-      while (bodyLines.length < 20 && lines.length > index + 1) {
-        bodyLines.push(lines[index + 1]);
+      // Add next 20 lines as body if any code exists
+      const codeLines = [];
+      for (let i = 1; i <= 20 && lines.length > index + i; i++) {
+        codeLines.push(lines[index + i]);
       }
-      bodyLines.push("```");
+
+      if (codeLines.some(line => line.trim() !== "")) {
+        bodyLines.push("```");
+        bodyLines.push(...codeLines);
+        bodyLines.push("```");
+      }
 
       issues.push({
         title: title,
