@@ -61,7 +61,7 @@ async function getGists(
   owner: string
 ): Promise<Gist[]> {
   try {
-    const response = (await octokit.rest.gists.list({ owner })) as {
+    const response = (await octokit.request("GET /gists")) as {
       data: {
         id: string;
         owner: { login: string };
@@ -143,14 +143,14 @@ async function updateGist(
 function gistsAreEqual(gist1: Gist, gist2: Gist): boolean {
   if (gist1.description !== gist2.description) return false;
   if (gist1.files.length !== gist2.files.length) return false;
-  
+
   for (const file1 of gist1.files) {
-    const file2 = gist2.files.find(f => f.filename === file1.filename);
+    const file2 = gist2.files.find((f) => f.filename === file1.filename);
     if (!file2 || file1.content !== file2.content) {
       return false;
     }
   }
-  
+
   return true;
 }
 
