@@ -10,5 +10,17 @@ export interface OctokitInstance {
 
 export interface Issue {
   title: string;
-  body: string
+  body: string;
+}
+
+export interface Gist {
+  id?: string;
+  owner: string;
+  description: string;
+  files: GistFile[];
+}
+
+export interface GistFile {
+  filename: string;
+  content: string;
 }
