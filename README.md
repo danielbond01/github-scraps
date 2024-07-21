@@ -4,10 +4,10 @@ Github-Scraps is a GitHub App that allows you to automatically create issues and
 
 ## Features
 
-- Automatic issue creation from code comments
-- Automatic gist creation and management
+- Automatic issue creation from code comments using the [ISSUE] pattern
 - Support for multiple comment types
 - Seamless integration with GitHub repositories
+- (COMING SOON) Keep track of similar or replicated code across your codebases using [SCRAPS] which you can copy and paste into your new projects
 
 ## Installation
 
@@ -35,19 +35,19 @@ When you push your code, Github-Scraps will automatically create an issue with:
 - The surrounding code
 - A permalink to the line of code
 
-### Creating Gists
+### Creating Scraps (Coming Soon)
 
-You can also use github gists to keep track of bits of code you use in multiple places. For example, let's say you write a login function for project1. You can wrap it in a GIST like
+When added, you'll be able to use Github-Scraps to keep track of bits of code you use in multiple places. For example, let's say you write a login function for project1. You can wrap it in a SCRAP like
 
 ```
-// [GIST] My Auth Implementation [username] [login]
+// [SCRAP] My Auth Implementation
 function login(user: User) {
   loginUser(user);
 }
-// [GIST]
+// [SCRAP]
 ```
 
-If you are the user specified in [username], Github-Scraps will create a Gist for you with the description 'My Auth Implementation', and a file with the name '<repo>/login' will be made. The content between the [GIST] tags will be included in the gist. You then copy this into another project2. Wrapping this in a GIST will also add this file (with a different repo of course) to the same Gist. If any of these implmementations are changed, the Gist will be updated and you always keep track of their differences on your Github Gists page.
+Github-Scraps will create a record of this code for you, viewable on (ProjectLab)[https://www.projectlab.space] with the description 'My Auth Implementation'. The content between the [SCRAP] tags will be included in the recorded code snippet. You can then copy this into another project2. Wrapping this in a SCRAP will also add this file to the same set of records. If any of these implmementations are changed, the UI in ProjectLab will be updated and you'll be able to compare implementations across repositories and, of course, copy and paste into any new projects.
 
 ### Getting Started for Contributors
 

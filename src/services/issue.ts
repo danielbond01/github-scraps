@@ -1,7 +1,13 @@
 import { info } from "console";
 import { Issue, OctokitInstance, RepoInfo } from "../types/index.js";
 
-export function extractIssues(owner: string, repo: string, sha: string, file: string, content: string): Issue[] {
+export function extractIssues(
+  owner: string,
+  repo: string,
+  sha: string,
+  file: string,
+  content: string
+): Issue[] {
   const lines = content.split("\n");
   const issues: Issue[] = [];
   const issueRegex = /\[ISSUE\]\s*(.*)/;
@@ -18,10 +24,16 @@ export function extractIssues(owner: string, repo: string, sha: string, file: st
 
       // Check if the next line is a body line
       if (title.endsWith(":") && lines.length > index + 1) {
-        const bodyLine = lines[index + 1].trim().replace(commentRegex, '$1');
-        bodyLines.push(`${owner} created an issue in ${friendlyFile} on line ${index + 1} - ${bodyLine}\n`);
+        const bodyLine = lines[index + 1].trim().replace(commentRegex, "$1");
+        bodyLines.push(
+          `${owner} created an issue in ${friendlyFile} on line ${
+            index + 1
+          } - ${bodyLine}\n`
+        );
       } else {
-        bodyLines.push(`${owner} created an issue in ${friendlyFile} on line ${index + 1}\n`);
+        bodyLines.push(
+          `${owner} created an issue in ${friendlyFile} on line ${index + 1}\n`
+        );
       }
 
       // Add up to the last 5 lines
@@ -37,10 +49,13 @@ export function extractIssues(owner: string, repo: string, sha: string, file: st
       }
 
       // Combine preceding and following lines, removing leading and trailing empty lines
-      const combinedCodeLines = [...precedingCodeLines, ...followingCodeLines].filter((line, idx, arr) => {
+      const combinedCodeLines = [
+        ...precedingCodeLines,
+        ...followingCodeLines,
+      ].filter((line, idx, arr) => {
         return line.trim() !== "" || (idx > 0 && idx < arr.length - 1);
       });
-      
+
       if (combinedCodeLines.length > 0) {
         bodyLines.push("```");
         bodyLines.push(...combinedCodeLines);
@@ -48,7 +63,9 @@ export function extractIssues(owner: string, repo: string, sha: string, file: st
       }
 
       // Add permalink
-      const permalink = `https://github.com/${owner}/${repo}/blob/${sha}/${file}#L${index + 1}`;
+      const permalink = `https://github.com/${owner}/${repo}/blob/${sha}/${file}#L${
+        index + 1
+      }`;
       bodyLines.push(`\nPermalink:\n ${permalink}`);
 
       issues.push({
@@ -104,14 +121,19 @@ export async function syncIssues(
 ) {
   const existingIssues = await getIssues(octokit, repoInfo);
 
-  info(`Found ${existingIssues.length} existing issues in ${repoInfo.owner}/${repoInfo.repo}:`, existingIssues.map((issue) => issue.title));
+  info(
+    `Found ${existingIssues.length} existing issues in ${repoInfo.owner}/${repoInfo.repo}:`,
+    existingIssues.map((issue) => issue.title)
+  );
 
   const existingTitles = existingIssues.map((issue) => issue.title);
   const newIssues = issues.filter(
     (issue) => !existingTitles.includes(issue.title)
   );
 
-  info(`Creating ${newIssues.length} new issues in ${repoInfo.owner}/${repoInfo.repo}`);
+  info(
+    `Creating ${newIssues.length} new issues in ${repoInfo.owner}/${repoInfo.repo}`
+  );
 
   for (const issue of newIssues) {
     info(`Creating issue: ${issue.title}`);

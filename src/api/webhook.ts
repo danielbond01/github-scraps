@@ -8,11 +8,14 @@ app.webhooks.on("push", async ({ octokit, payload }) => {
   console.log("Received push for repo", payload.repository.name);
   const owner = payload.repository.owner?.login;
   if (owner) {
-    await analyzeFiles({ octokit }, { 
-      owner, 
-      repo: payload.repository.name,
-      sha: payload.after
-    });
+    await analyzeFiles(
+      { octokit },
+      {
+        owner,
+        repo: payload.repository.name,
+        sha: payload.after,
+      }
+    );
   }
 });
 
@@ -26,7 +29,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   // Use Octokit's middleware to handle the webhook
   const middleware = createNodeMiddleware(app.webhooks, {
     path: "/api/webhook",
-    log: undefined
+    log: undefined,
   });
 
   // Directly handle the request and response with the middleware
