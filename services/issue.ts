@@ -7,7 +7,7 @@ export function extractIssues(owner: string, repo: string, sha: string, file: st
   const issueRegex = /\[ISSUE\]\s*(.*)/;
   const commentRegex = /^[#\/\*]\s*(.*)$/;
 
-  const friendlyFile = file.split("/")[-1];
+  const friendlyFile = file.split("/").reverse()[0];
 
   lines.forEach((line, index) => {
     const match = issueRegex.exec(line);
@@ -32,7 +32,7 @@ export function extractIssues(owner: string, repo: string, sha: string, file: st
 
       // Add next 15 lines
       const followingCodeLines = [];
-      for (let i = 1; i <= 15 && lines.length > index + i; i++) {
+      for (let i = 0; i <= 15 && lines.length > index + i; i++) {
         followingCodeLines.push(lines[index + i]);
       }
 
