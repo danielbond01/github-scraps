@@ -67,5 +67,7 @@ export async function analyzeFiles(
   );
 
   await syncIssues({ octokit }, repoInfo, issues);
-  // await syncGists({ octokit }, repoInfo, gists);
+
+  const response = await octokit.rest.gists.list();
+  console.log(response.data);
 }
