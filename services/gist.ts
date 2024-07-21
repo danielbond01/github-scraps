@@ -61,7 +61,11 @@ async function getGists(
   owner: string
 ): Promise<Gist[]> {
   try {
-    const response = (await octokit.request("GET /gists")) as {
+    const response = (await octokit.request("GET /gists", {
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    })) as {
       data: {
         id: string;
         owner: { login: string };
