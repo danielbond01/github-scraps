@@ -7,4 +7,6 @@ export const app = new App({
   webhooks: {
     secret: config.webhookSecret,
   },
+  clientId: config.clientId,
+  clientSecret: config.clientSecret,
 });
