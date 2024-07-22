@@ -11,7 +11,7 @@ Github-Scraps is a GitHub App that allows you to automatically create issues dir
 
 ## Installation
 
-1. Go to [GitHub Apps - Scraps by ProjectLab](https://github.com/apps/scraps-by-projectlab) (replace with actual link)
+1. Go to [GitHub Apps - Scraps by ProjectLab](https://github.com/apps/scraps-by-projectlab)
 2. Click on "Install"
 3. Choose the repository or repositories where you want to install Github-Scraps
 4. Authorize the app
