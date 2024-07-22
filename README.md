@@ -1,6 +1,6 @@
 # Github-Scraps
 
-Github-Scraps is a GitHub App that allows you to automatically create issues and gists directly from your codebase. It streamlines your workflow by enabling you to mark important code sections for later review or sharing without interrupting your coding process.
+Github-Scraps is a GitHub App that allows you to automatically create issues directly from your codebase. It streamlines your workflow by enabling you to mark important code sections for later review or sharing without interrupting your coding process.
 
 ## Features
 
